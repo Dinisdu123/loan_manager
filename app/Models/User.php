@@ -13,6 +13,15 @@ class User extends Model
         'address',
         'user_number', 
     ];
+    public function centers()
+    {
+        return $this->belongsToMany(Center::class);
+    }
 
+    // Define relationship with given loans
+    public function given_loans()
+    {
+        return $this->hasMany(GivenLoan::class);
+    }
     
 }

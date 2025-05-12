@@ -13,7 +13,15 @@ class GivenLoanController extends Controller
 {
     public function create()
     {
-        $centers = Center::with('members')->get();
+        // Load centers with members who don't have active loans with pending payments
+        $centers = Center::with(['members' => function ($query) {
+            $query->whereDoesntHave('given_loans', function ($loanQuery) {
+                $loanQuery->where('status', 'active')
+                          ->whereHas('payments', function ($paymentQuery) {
+                              $paymentQuery->where('status', 'pending');
+                          });
+            });
+        }])->get();
         return view('given_loans.create', compact('centers'));
     }
 
@@ -27,6 +35,17 @@ class GivenLoanController extends Controller
             'duration_months' => 'required|integer|min:1',
             'start_date' => 'required|date',
         ]);
+
+        // Check if the user has an active loan with pending payments
+        $existingLoan = GivenLoan::where('user_id', $request->user_id)
+            ->where('status', 'active')
+            ->whereHas('payments', function ($query) {
+                $query->where('status', 'pending');
+            })->first();
+
+        if ($existingLoan) {
+            return redirect()->back()->withInput()->with('error', 'This user already has an active loan with pending installments.');
+        }
 
         $amount = $request->amount;
         $interest_rate = $request->interest_rate / 100; // Convert to decimal
@@ -53,8 +72,8 @@ class GivenLoanController extends Controller
             'status' => 'active',
         ]);
 
-        // Generate payment schedule
-        $current_date = Carbon::parse($request->start_date)->addWeek();
+        // Generate payment schedule, first payment 7 days after start_date
+        $current_date = Carbon::parse($request->start_date)->addDays(7);
         for ($i = 0; $i < $weeks; $i++) {
             GivenPayment::create([
                 'given_loan_id' => $loan->id,
@@ -69,8 +88,8 @@ class GivenLoanController extends Controller
 
     public function index()
     {
-        $loans = GivenLoan::with('user', 'center')->get();
-        return view('given_loans.index', compact('loans'));
+        $centers = Center::all();
+        return view('given_loans.index', compact('centers'));
     }
 
     public function show(GivenLoan $loan)
@@ -98,9 +117,40 @@ class GivenLoanController extends Controller
         $loan->delete();
         return redirect()->route('given_loans.index')->with('success', 'Loan deleted successfully.');
     }
+
     public function getUsersByCenter($centerId)
-{
-    $center = Center::with('members')->findOrFail($centerId);
-    return response()->json($center->members);
+    {
+        $center = Center::with(['members' => function ($query) {
+            $query->whereDoesntHave('given_loans', function ($loanQuery) {
+                $loanQuery->where('status', 'active')
+                          ->whereHas('payments', function ($paymentQuery) {
+                              $paymentQuery->where('status', 'pending');
+                          });
+            });
+        }])->findOrFail($centerId);
+        return response()->json($center->members);
+    }
+
+    public function showCenterMembers(Center $center)
+    {
+        $members = $center->members()->with(['given_loans' => function ($query) {
+            $query->where('status', 'active');
+        }])->get();
+        return view('given_loans.members', compact('center', 'members'));
+    }
+
+    public function showMemberLoan(User $user)
+    {
+        $loan = GivenLoan::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->with('payments', 'center')
+            ->first();
+        if (!$loan) {
+            return redirect()->route('given_loans.center_members', $user->centers->first()->id)
+                ->with('error', 'No active loan found for this member.');
+        }
+        $payments = $loan->payments;
+        return view('given_loans.member_loan', compact('loan', 'payments', 'user'));
+    }
 }
-}
+?>

@@ -61,5 +61,8 @@ Route::post('/given-loans', [GivenLoanController::class, 'store'])->name('given_
 Route::get('/given-loans/{loan}', [GivenLoanController::class, 'show'])->name('given_loans.show');
 Route::delete('/given-loans/{loan}', [GivenLoanController::class, 'destroy'])->name('given_loans.destroy');
 Route::post('/given-payments/{payment}/mark-paid', [GivenLoanController::class, 'markPaymentPaid'])->name('payments.markPaid');
-Route::get('/given-loans/center/{centerId}/loans', [GivenLoanController::class, 'getLoansByCenter'])->name('given_loans.by_center');
 Route::get('/centers/{centerId}/users', [GivenLoanController::class, 'getUsersByCenter'])->name('centers.users');
+
+// New routes
+Route::get('/given-loans/center/{center}/members', [GivenLoanController::class, 'showCenterMembers'])->name('given_loans.center_members');
+Route::get('/given-loans/member/{user}/loan', [GivenLoanController::class, 'showMemberLoan'])->name('given_loans.member_loan');
