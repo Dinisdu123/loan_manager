@@ -3,26 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>@yield('title', 'Loan Management System')</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .btn-custom {
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+        .animate-on-load {
+            animation-delay: 0s !important;
+        }
+    </style>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand" href="{{ route('loans.index') }}">Loan Management</a>
-        <div class="navbar-nav">
-            <a class="nav-link" href="javascript:history.back()">Back</a>
-            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-            <a class="nav-link" href="{{ route('loans.create') }}">Add Loan</a>
+<body class="bg-gray-100 font-sans">
+    <!-- Fixed Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg z-50 animate__animated animate__fadeInDown animate__faster">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo/Brand -->
+            <a href="{{ route('dashboard') }}"
+               class="text-2xl font-extrabold text-white flex items-center">
+                <i class="fas fa-tachometer-alt mr-2"></i>LMS
+            </a>
+            <!-- Menu Items -->
+            <div class="flex space-x-4">
+                <a href="{{ route('dashboard') }}"
+                   class="text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center">
+                    <i class="fas fa-home mr-1"></i>Dashboard
+                </a>
+                <a href="{{ route('loans.index') }}"
+                   class="text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center">
+                    <i class="fas fa-money-check-alt mr-1"></i>Loans
+                </a>
+                <a href="{{ route('payments.index') }}"
+                   class="text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center">
+                    <i class="fas fa-money-bill mr-1"></i>Payments
+                </a>
+                <a href="{{ route('centers.index') }}"
+                   class="text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center">
+                    <i class="fas fa-building mr-1"></i>Centers
+                </a>
+                <a href="{{ route('given_loans.index') }}"
+                   class="text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center">
+                    <i class="fas fa-clipboard-list mr-1"></i>Given Loans
+                </a>
+            </div>
         </div>
-    </div>
-</nav>
-    <div class="container mt-4">
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20"> <!-- Padding to prevent content overlap -->
         @yield('content')
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </main>
+
+    <!-- JavaScript for Animation Trigger -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.animate-on-load');
+            elements.forEach(el => el.classList.add('animate__animated'));
+        });
+    </script>
 </body>
 </html>
