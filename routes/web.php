@@ -66,7 +66,7 @@ Route::delete('/given-loans/{givenLoan}', [GivenLoanController::class, 'destroy'
 // New routes
 Route::get('/given-loans/center/{center}/members', [GivenLoanController::class, 'showCenterMembers'])->name('given_loans.center_members');
 Route::get('/given-loans/member/{user}/loan', [GivenLoanController::class, 'showMemberLoan'])->name('given_loans.member_loan');
-
+Route::get('/given-loans/history/{user}', [GivenLoanController::class, 'history'])->name('given_loans.history');
 
 
 Route::get('/given-loans', [GivenLoanController::class, 'index'])->name('given_loans.index');
@@ -80,3 +80,11 @@ Route::get('/given-loans/member/{user}/loan', [GivenLoanController::class, 'show
 Route::get('/given-loans/report-search', [GivenLoanController::class, 'reportSearch'])->name('given_loans.report_search');
 Route::get('/given-loans/report/{user_number}', [GivenLoanController::class, 'report'])->name('given_loans.report');
 Route::get('/given-loans/center/{centerId}/users', [GivenLoanController::class, 'getUsersByCenter'])->name('given_loans.get_users_by_center');
+
+
+// Route::get('/centers/{center}', [CenterController::class, 'show'])->name('centers.show');
+Route::get('/given-loans/history/{user}', [GivenLoanController::class, 'history'])->name('given_loans.history');
+Route::get('/centers/{center}/details', [CenterController::class, 'details'])->name('centers.details');
+
+Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');

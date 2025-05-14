@@ -12,7 +12,6 @@
             </a>
         </div>
 
-       
         @if (session('success'))
             <div class="bg-green-500 text-white p-4 rounded-lg shadow-md mb-6 animate__animated animate__bounceIn animate__fastest animate__delay-100ms">
                 {{ session('success') }}
@@ -51,6 +50,10 @@
                                             class="btn-custom bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 inline-flex items-center shadow-md">
                                         <i class="fas fa-user-minus mr-2"></i>Remove Member
                                     </button>
+                                    <a href="{{ route('centers.details', $center->id) }}"
+                                       class="btn-custom bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 inline-flex items-center shadow-md">
+                                        <i class="fas fa-eye mr-2"></i>View Center
+                                    </a>
                                 </td>
                             </tr>
                         @empty

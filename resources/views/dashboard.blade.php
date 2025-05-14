@@ -25,7 +25,7 @@
                     </a>
                     <a href="{{ route('payments.index') }}"
                        class="btn-custom bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-cyan-600 flex items-center shadow-md">
-                        <i class="fas fa-money-bill mr-2"></i>View Payments
+                        <i class="fas fa-money-bill mr-2"></i>Paid Payments
                     </a>
                 </div>
             </div>

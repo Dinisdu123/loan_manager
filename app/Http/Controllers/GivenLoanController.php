@@ -208,5 +208,16 @@ class GivenLoanController extends Controller
         }
         return view('given_loans.report', compact('user', 'loans', 'total_loans', 'completed_loans', 'active_loans', 'unpaid_loans', 'overdue_payments'));
     }
+    public function history(User $user)
+{
+    $loans = GivenLoan::with('center')
+        ->where('user_id', $user->id)
+        ->get();
+
+    $totalLoansAmount = $loans->sum('amount');
+    $totalDurationMonths = $loans->sum('duration_months');
+
+    return view('given_loans.history', compact('user', 'loans', 'totalLoansAmount', 'totalDurationMonths'));
+}
 }
 ?>

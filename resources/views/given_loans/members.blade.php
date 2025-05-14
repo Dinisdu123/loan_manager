@@ -32,15 +32,20 @@
                                         {{ $member->given_loans->isNotEmpty() ? 'Yes' : 'No' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm">
+                                <td class="px-6 py-4 text-sm flex gap-2">
+                                
                                     @if ($member->given_loans->isNotEmpty())
+                                        
                                         <a href="{{ route('given_loans.member_loan', $member->id) }}"
                                            class="btn-custom bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-blue-700 inline-flex items-center shadow-md">
-                                            <i class="fas fa-eye mr-2"></i>View More
+                                            <i class="fas fa-eye mr-2"></i>View Ongoin Loan
                                         </a>
-                                    @else
-                                        <span class="text-gray-500">No Loan</span>
+                                    
                                     @endif
+                                        <a href="{{ route('given_loans.history', $member->id) }}"
+                                               class="btn-custom bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 inline-flex items-center shadow-md">
+                                                <i class="fas fa-history mr-2"></i>View History Loans
+                                        </a>
                                 </td>
                             </tr>
                         @empty

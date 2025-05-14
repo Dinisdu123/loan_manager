@@ -32,4 +32,23 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'user_number' => 'required|string|max:255|unique:users,user_number,' . $user->id,
+            'address' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('centers.details', $user->centers->first()->id)
+                         ->with('success', 'User updated successfully.');
+    }
 }

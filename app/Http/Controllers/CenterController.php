@@ -73,4 +73,9 @@ class CenterController extends Controller
 
         return redirect()->route('centers.index')->with('success', 'Member removed successfully.');
     }
+    public function details(Center $center)
+    {
+        $center->load('leader', 'members');
+        return view('centers.details', compact('center'));
+    }
 }
