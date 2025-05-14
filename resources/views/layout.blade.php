@@ -26,15 +26,15 @@
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <!-- Fixed Navbar -->
+   
     <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg z-50 animate__animated animate__fadeInDown animate__faster">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <!-- Logo/Brand -->
+            
             <a href="{{ route('dashboard') }}"
                class="text-2xl font-extrabold text-white flex items-center">
                 <i class="fas fa-tachometer-alt mr-2"></i>LMS
             </a>
-            <!-- Menu Items -->
+           
             <div class="flex space-x-4">
                 <a href="{{ route('dashboard') }}"
                    class="text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center">
@@ -60,12 +60,12 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="pt-20"> <!-- Padding to prevent content overlap -->
+   
+    <main class="pt-20"> 
         @yield('content')
     </main>
 
-    <!-- JavaScript for Animation Trigger -->
+   
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const elements = document.querySelectorAll('.animate-on-load');

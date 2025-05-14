@@ -2,14 +2,14 @@
 
 @section('content')
     <div class="container mx-auto px-4 animate-on-load">
-        <!-- Header Section -->
+       
         <div class="flex justify-between items-center mb-8 animate__animated animate__fadeIn animate__faster">
             <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900">
                 <i class="fas fa-money-bill mr-2"></i>Paid Payments
             </h1>
         </div>
 
-        <!-- Payment Details Section -->
+       
         <div class="mb-12 animate__animated animate__fadeInUp animate__faster animate__delay-200ms">
             <h2 class="text-2xl font-bold text-indigo-800 mb-6">
                 Payment Details
@@ -47,7 +47,7 @@
                         </table>
                     </div>
                 </div>
-                <!-- Pagination (if applicable) -->
+               
                 @if ($payments instanceof \Illuminate\Pagination\LengthAwarePaginator && $payments->hasPages())
                     <div class="mt-6 flex justify-end">
                         {{ $payments->links('pagination::tailwind') }}
@@ -56,7 +56,7 @@
             @endif
         </div>
 
-        <!-- Total Paid to Lender Section -->
+       
         <div class="animate__animated animate__fadeInUp animate__faster animate__delay-400ms">
             <h2 class="text-2xl font-bold text-indigo-800 mb-6">
                 Total Paid to Lender
@@ -86,7 +86,7 @@
                         </table>
                     </div>
                 </div>
-                <!-- Pagination for totals (if applicable) -->
+              
                 @if ($totals instanceof \Illuminate\Pagination\LengthAwarePaginator && $totals->hasPages())
                     <div class="mt-6 flex justify-end">
                         {{ $totals->links('pagination::tailwind') }}

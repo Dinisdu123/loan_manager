@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container mx-auto mt-10 px-4 animate-on-load">
-        <!-- Loan Details Header -->
+       
         <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900 animate__animated animate__fadeIn">
             <i class="fas fa-landmark mr-2"></i>Loan Details: {{ $loan->lender_name }}
         </h1>
 
-        <!-- Loan Details Card -->
+       
         <div class="card-hover bg-white p-6 rounded-xl shadow-xl mt-6 max-w-2xl mx-auto animate__animated animate__fadeInUp animate__delay-1s">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <p class="text-gray-700">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- Delete Loan Button -->
+       
         <div class="mt-6 text-center animate__animated animate__fadeInUp animate__delay-2s">
             <form action="{{ route('loans.destroy', $loan) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this loan? This action cannot be undone.');">
                 @csrf
@@ -51,7 +51,7 @@
             </form>
         </div>
 
-        <!-- Payment Schedule -->
+      
         <h2 class="text-2xl font-bold text-indigo-800 mt-12 mb-6 animate__animated animate__fadeIn animate__delay-3s">
             <i class="fas fa-calendar-check mr-2"></i>Payment Schedule
         </h2>

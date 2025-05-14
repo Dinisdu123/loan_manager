@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-6 bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen animate-on-load">
-        <!-- Header Section -->
+       
         <div class="flex justify-between items-center mb-6 animate__animated animate__fadeIn animate__fastest">
             <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900 drop-shadow-md">
                 <i class="fas fa-user-plus mr-2 text-indigo-600"></i>Add New User
@@ -13,7 +13,7 @@
             </a>
         </div>
 
-        <!-- Error Messages -->
+       
         @if ($errors->any())
             <div class="bg-red-500 text-white p-4 rounded-lg shadow-md mb-6 animate__animated animate__bounceIn animate__fastest animate__delay-100ms">
                 <ul class="list-disc list-inside">

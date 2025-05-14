@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-6 bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen animate-on-load">
-        <!-- Header Section -->
         <div class="flex justify-between items-center mb-6 animate__animated animate__fadeIn animate__fastest">
             <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900 drop-shadow-md">
                 <i class="fas fa-hand-holding-usd mr-2 text-indigo-600"></i>Assign New Loan
@@ -13,7 +12,6 @@
             </a>
         </div>
 
-        <!-- Error Messages -->
         @if ($errors->any())
             <div class="bg-red-500 text-white p-4 rounded-lg shadow-md mb-6 animate__animated animate__bounceIn animate__fastest animate__delay-100ms">
                 <ul class="list-disc list-inside">
@@ -24,7 +22,6 @@
             </div>
         @endif
 
-        <!-- Form Section -->
         <div class="bg-white rounded-xl shadow-lg p-6 max-w-lg mx-auto card-hover bg-gradient-to-br from-white to-gray-50 border border-indigo-200 hover:shadow-xl transition-all duration-300 animate__animated animate__fadeInUp animate__fastest animate__delay-200ms">
             <form method="POST" action="{{ route('given_loans.store') }}">
                 @csrf
@@ -50,7 +47,7 @@
                             class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm py-2 px-3"
                             required>
                         <option value="">Select a User</option>
-                        <!-- Populated via JavaScript -->
+
                     </select>
                     @error('user_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -106,7 +103,6 @@
         </div>
     </div>
 
-    <!-- JavaScript for Dynamic User Selection -->
     <script>
         function updateUsers() {
             const centerId = document.getElementById('center_id').value;

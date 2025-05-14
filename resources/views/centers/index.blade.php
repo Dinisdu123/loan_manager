@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-6 bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen animate-on-load">
-        <!-- Header Section -->
         <div class="flex justify-between items-center mb-6 animate__animated animate__fadeIn animate__fastest">
             <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900 drop-shadow-md">
                 <i class="fas fa-building mr-2 text-indigo-600"></i>Centers Overview
@@ -13,14 +12,13 @@
             </a>
         </div>
 
-        <!-- Success Message -->
+       
         @if (session('success'))
             <div class="bg-green-500 text-white p-4 rounded-lg shadow-md mb-6 animate__animated animate__bounceIn animate__fastest animate__delay-100ms">
                 {{ session('success') }}
             </div>
         @endif
 
-        <!-- Centers Table -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover bg-gradient-to-br from-white to-gray-50 border border-indigo-200 hover:shadow-xl transition-all duration-300 animate__animated animate__fadeInUp animate__fastest animate__delay-200ms">
             <div class="overflow-x-auto">
                 <table class="w-full table-auto">
@@ -67,16 +65,13 @@
             </div>
         </div>
 
-        <!-- Pagination -->
         @if ($centers instanceof \Illuminate\Pagination\LengthAwarePaginator && $centers->hasPages())
             <div class="mt-6 flex justify-end animate__animated animate__fadeInUp animate__fastest animate__delay-300ms">
                 {{ $centers->links('pagination::tailwind') }}
             </div>
         @endif
 
-        <!-- Modals -->
         @foreach ($centers as $center)
-            <!-- Assign Leader Modal -->
             <dialog id="assign-leader-{{ $center->id }}"
                     class="p-6 bg-white rounded-xl shadow-lg max-w-md w-full bg-gradient-to-br from-white to-gray-50 border border-indigo-200 animate__animated animate__zoomIn animate__fastest">
                 <h2 class="text-xl font-bold text-indigo-900 mb-4">
@@ -113,7 +108,6 @@
                 </form>
             </dialog>
 
-            <!-- Add Member Modal -->
             <dialog id="add-member-{{ $center->id }}"
                     class="p-6 bg-white rounded-xl shadow-lg max-w-md w-full bg-gradient-to-br from-white to-gray-50 border border-indigo-200 animate__animated animate__zoomIn animate__fastest">
                 <h2 class="text-xl font-bold text-indigo-900 mb-4">
@@ -150,7 +144,6 @@
                 </form>
             </dialog>
 
-            <!-- Remove Member Modal -->
             <dialog id="remove-member-{{ $center->id }}"
                     class="p-6 bg-white rounded-xl shadow-lg max-w-md w-full bg-gradient-to-br from-white to-gray-50 border border-indigo-200 animate__animated animate__zoomIn animate__fastest">
                 <h2 class="text-xl font-bold text-indigo-900 mb-4">

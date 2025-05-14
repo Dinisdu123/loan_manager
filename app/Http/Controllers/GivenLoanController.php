@@ -7,13 +7,14 @@ use App\Models\User;
 use App\Models\GivenLoan;
 use App\Models\GivenPayment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Twilio\Rest\Client;
 
 class GivenLoanController extends Controller
 {
     public function create()
     {
-        // Load centers with members who don't have active loans with pending payments
         $centers = Center::with(['members' => function ($query) {
             $query->whereDoesntHave('given_loans', function ($loanQuery) {
                 $loanQuery->where('status', 'active')
@@ -36,7 +37,6 @@ class GivenLoanController extends Controller
             'start_date' => 'required|date',
         ]);
 
-        // Check if the user has an active loan with pending payments
         $existingLoan = GivenLoan::where('user_id', $request->user_id)
             ->where('status', 'active')
             ->whereHas('payments', function ($query) {
@@ -48,15 +48,13 @@ class GivenLoanController extends Controller
         }
 
         $amount = $request->amount;
-        $interest_rate = $request->interest_rate / 100; // Convert to decimal
+        $interest_rate = $request->interest_rate / 100;
         $duration_months = $request->duration_months;
 
-        // Calculate total repayment (simple interest)
         $interest = $amount * $interest_rate * $duration_months;
         $total_repayment = $amount + $interest;
 
-        // Calculate weekly repayment
-        $weeks = $duration_months * 4; // Approximate 4 weeks per month
+        $weeks = $duration_months * 4;
         $weekly_repayment = $total_repayment / $weeks;
 
         $loan = GivenLoan::create([
@@ -72,7 +70,6 @@ class GivenLoanController extends Controller
             'status' => 'active',
         ]);
 
-        // Generate payment schedule, first payment 7 days after start_date
         $current_date = Carbon::parse($request->start_date)->addDays(7);
         for ($i = 0; $i < $weeks; $i++) {
             GivenPayment::create([
@@ -92,8 +89,12 @@ class GivenLoanController extends Controller
         return view('given_loans.index', compact('centers'));
     }
 
-    public function show(GivenLoan $loan)
+    public function show($id)
     {
+        $loan = GivenLoan::with('center', 'user', 'payments')->find($id);
+        if (!$loan) {
+            return redirect()->route('given_loans.report_search')->with('error', 'Loan not found.');
+        }
         $payments = $loan->payments;
         return view('given_loans.show', compact('loan', 'payments'));
     }
@@ -109,11 +110,39 @@ class GivenLoanController extends Controller
         }
         $loan->save();
 
+        // Send SMS to user
+        $user = $loan->user;
+        if ($user && $user->phone) {
+            try {
+                
+                $formattedPhoneNumber = preg_replace('/^0/', '+94', $user->phone);
+                Log::debug('Attempting to send SMS to: ' . $formattedPhoneNumber . ' for user ID: ' . $user->id);
+                
+                $twilio = new Client(config('services.twilio.sid'), config('services.twilio.token'));
+                $message = "Dear {$user->name}, your installment of LKR {$payment->amount}  has been Recieved " . now()->format('Y-m-d') . ". You have LKR " . number_format($loan->remaining_balance, 2) . " left to pay. Thank you! Reply STOP to unsubscribe.";
+                $twilio->messages->create(
+                    $formattedPhoneNumber,
+                    [
+                        'from' => config('services.twilio.from'),
+                        'body' => $message,
+                    ]
+                );
+                Log::info('SMS sent successfully to: ' . $formattedPhoneNumber);
+            } catch (\Exception $e) {
+                Log::error('Failed to send SMS to ' . $formattedPhoneNumber . ' for user ID ' . $user->id . ': ' . $e->getMessage());
+            }
+        } else {
+            Log::warning('SMS not sent for user ID ' . ($user ? $user->id : 'unknown') . ': Missing phone');
+        }
+
         return redirect()->back()->with('success', 'Payment marked as paid.');
     }
 
     public function destroy(GivenLoan $loan)
     {
+        if (!$loan->exists) {
+            return redirect()->route('given_loans.report_search')->with('error', 'Loan not found.');
+        }
         $loan->delete();
         return redirect()->route('given_loans.index')->with('success', 'Loan deleted successfully.');
     }
@@ -143,14 +172,41 @@ class GivenLoanController extends Controller
     {
         $loan = GivenLoan::where('user_id', $user->id)
             ->where('status', 'active')
-            ->with('payments', 'center')
+            ->with('payments', 'center', 'user')
             ->first();
         if (!$loan) {
-            return redirect()->route('given_loans.center_members', $user->centers->first()->id)
-                ->with('error', 'No active loan found for this member.');
+            $center = $user->centers->first();
+            if ($center) {
+                return redirect()->route('given_loans.center_members', $center->id)
+                    ->with('error', 'No active loan found for this member.');
+            }
+            return redirect()->route('given_loans.report_search')
+                ->with('error', 'No active loan found and user is not associated with any center.');
         }
         $payments = $loan->payments;
-        return view('given_loans.member_loan', compact('loan', 'payments', 'user'));
+        return view('given_loans.show', compact('loan', 'payments'));
+    }
+
+    public function reportSearch()
+    {
+        return view('given_loans.report_search');
+    }
+
+    public function report($user_number)
+    {
+        $user = User::where('user_number', $user_number)->with('given_loans.payments')->firstOrFail();
+        $loans = $user->given_loans;
+        $total_loans = $loans->count();
+        $completed_loans = $loans->where('status', 'paid')->count();
+        $active_loans = $loans->where('status', 'active')->count();
+        $unpaid_loans = $loans->where('status', 'active')->where('remaining_balance', '>', 0)->count();
+        $overdue_payments = 0;
+        foreach ($loans as $loan) {
+            $overdue_payments += $loan->payments->where('status', 'pending')
+                ->where('payment_date', '<', Carbon::today())
+                ->count();
+        }
+        return view('given_loans.report', compact('user', 'loans', 'total_loans', 'completed_loans', 'active_loans', 'unpaid_loans', 'overdue_payments'));
     }
 }
 ?>

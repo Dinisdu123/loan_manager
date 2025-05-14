@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container mx-auto mt-10 px-4 animate-on-load">
-        <!-- Form Header -->
+        
         <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900 animate__animated animate__fadeIn">
             <i class="fas fa-plus-circle mr-2"></i>Add New Loan
         </h1>
@@ -10,11 +10,11 @@
             Fill in the details below to create a new loan.
         </p>
 
-        <!-- Form Card -->
+      
         <div class="card-hover bg-white p-6 rounded-xl shadow-xl mt-6 max-w-lg mx-auto animate__animated animate__fadeInUp animate__delay-2s">
             <form action="{{ route('loans.store') }}" method="POST">
                 @csrf
-                <!-- Lender Name -->
+               
                 <div class="mb-4">
                     <label for="lender_name" class="block text-indigo-600 font-semibold mb-2">
                         <i class="fas fa-user mr-1"></i>Lender Name
@@ -25,7 +25,7 @@
                     @enderror
                 </div>
 
-                <!-- Loan Amount -->
+              
                 <div class="mb-4">
                     <label for="amount" class="block text-indigo-600 font-semibold mb-2">
                         <i class="fas fa-money-bill mr-1"></i>Loan Amount
@@ -36,7 +36,7 @@
                     @enderror
                 </div>
 
-                <!-- Interest Rate -->
+                
                 <div class="mb-4">
                     <label for="interest_rate" class="block text-indigo-600 font-semibold mb-2">
                         <i class="fas fa-percentage mr-1"></i>Interest Rate (% per month)
@@ -47,7 +47,7 @@
                     @enderror
                 </div>
 
-                <!-- Duration -->
+              
                 <div class="mb-4">
                     <label for="duration_months" class="block text-indigo-600 font-semibold mb-2">
                         <i class="fas fa-clock mr-1"></i>Duration (Months)
@@ -58,7 +58,7 @@
                     @enderror
                 </div>
 
-                <!-- Start Date -->
+               
                 <div class="mb-4">
                     <label for="start_date" class="block text-indigo-600 font-semibold mb-2">
                         <i class="fas fa-calendar-alt mr-1"></i>Start Date
@@ -69,7 +69,6 @@
                     @enderror
                 </div>
 
-                <!-- Submit Button -->
                 <div class="text-center">
                     <button type="submit" class="btn-custom bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300">
                         <i class="fas fa-save mr-2"></i>Save Loan

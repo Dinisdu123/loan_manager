@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container mx-auto px-4 animate-on-load">
-        <!-- Header Section -->
+       
         <div class="flex justify-between items-center mb-8 animate__animated animate__fadeIn">
             <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900">
                 <i class="fas fa-list mr-2"></i>All Loans
@@ -13,7 +13,7 @@
             </a>
         </div>
 
-        <!-- Loans Table -->
+    
         <div class="bg-white rounded-xl shadow-xl overflow-hidden card-hover animate__animated animate__fadeInUp animate__delay-1s">
             <div class="overflow-x-auto">
                 <table class="w-full table-auto">

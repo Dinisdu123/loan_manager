@@ -2,14 +2,14 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8 bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen animate-on-load">
-        <!-- Header Section -->
+    
         <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-900 text-center mb-10 drop-shadow-md animate__animated animate__zoomIn animate__faster">
             <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Loan Management System
         </h1>
 
-        <!-- Categories Section -->
+      
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate__animated animate__fadeInUp animate__faster animate__delay-100ms">
-            <!-- Loans & Payments -->
+           
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-indigo-100 to-blue-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-money-check-alt mr-2 text-xl text-indigo-600"></i>Loans & Payments
@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <!-- Users -->
+          
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-blue-100 to-purple-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-users mr-2 text-xl text-blue-600"></i>Users
@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <!-- Centers -->
+           
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-purple-100 to-pink-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-building mr-2 text-xl text-purple-600"></i>Centers
@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <!-- Given Loans -->
+            
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-orange-100 to-red-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-clipboard-list mr-2 text-xl text-orange-600"></i>Given Loans
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <!-- Nearest Upcoming Payment -->
+      
         <div class="mt-10 animate__animated animate__fadeInUp animate__faster animate__delay-300ms">
             <h2 class="text-2xl font-bold text-indigo-800 text-center mb-5 drop-shadow-sm">
                 Nearest Upcoming Payment
