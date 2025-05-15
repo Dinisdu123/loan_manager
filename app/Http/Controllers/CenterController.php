@@ -8,10 +8,19 @@ use Illuminate\Http\Request;
 
 class CenterController extends Controller
 {
+    // public function index()
+    // {
+    //     $centers = Center::with('leader', 'members')->get();
+    //     return view('centers.index', compact('centers'));
+    // }
     public function index()
     {
-        $centers = Center::with('leader', 'members')->get();
-        return view('centers.index', compact('centers'));
+    $centers = Center::with('leader', 'members')->get();
+    
+   
+    $usersWithoutCenter = User::whereDoesntHave('centers')->get();
+    
+    return view('centers.index', compact('centers', 'usersWithoutCenter'));
     }
 
     public function create()
@@ -47,15 +56,14 @@ class CenterController extends Controller
 
     public function addMember(Request $request, Center $center)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
+        $validated = $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
         ]);
-
-        if (!$center->members->contains($request->user_id)) {
-            $center->members()->attach($request->user_id);
-        }
-
-        return redirect()->route('centers.index')->with('success', 'Member added successfully.');
+    
+        $center->members()->attach($validated['user_ids']);
+    
+        return redirect()->route('centers.index')->with('success', 'Members added successfully.');
     }
 
     public function removeMember(Request $request, Center $center)
@@ -66,7 +74,7 @@ class CenterController extends Controller
 
         $center->members()->detach($request->user_id);
 
-        // If the removed user was the leader, set leader_id to null
+     
         if ($center->leader_id == $request->user_id) {
             $center->update(['leader_id' => null]);
         }
@@ -77,5 +85,31 @@ class CenterController extends Controller
     {
         $center->load('leader', 'members');
         return view('centers.details', compact('center'));
+    }
+    public function edit(Center $center)
+    {
+        $users = \App\Models\User::all(); // For leader selection
+        return view('centers.edit', compact('center', 'users'));
+    }
+
+    public function update(Request $request, Center $center)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nickname' => 'required|string|max:255',
+            'leader_id' => 'nullable|exists:users,id',
+        ]);
+
+        $center->update($validated);
+
+        return redirect()->route('centers.details', $center->id)
+                         ->with('success', 'Center updated successfully.');
+    }
+
+    public function destroy(Center $center)
+    {
+        $center->delete();
+        return redirect()->route('centers.index')
+                         ->with('success', 'Center deleted successfully.');
     }
 }

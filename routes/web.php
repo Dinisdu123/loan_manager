@@ -5,6 +5,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CenterController;
 use App\Http\Controllers\GivenLoanController;
 use App\Models\Payment;
+use App\Models\GivenPayment;
 use Illuminate\Support\Facades\Route;
 use Carbon\Carbon;
 
@@ -15,7 +16,20 @@ Route::get('/', function () {
         ->orderBy('payment_date', 'asc')
         ->first();
 
-    return view('dashboard', compact('nearestPayment'));
+    // Find the earliest payment date for pending given payments
+    $earliestGivenPaymentDate = GivenPayment::where('status', 'pending')
+        ->where('payment_date', '>=', Carbon::today())
+        ->min('payment_date');
+
+    // Fetch all pending given payments with the earliest payment date
+    $nearestGivenPayments = $earliestGivenPaymentDate
+        ? GivenPayment::where('status', 'pending')
+            ->where('payment_date', $earliestGivenPaymentDate)
+            ->with(['loan.user', 'loan.center'])
+            ->get()
+        : collect();
+
+    return view('dashboard', compact('nearestPayment', 'nearestGivenPayments'));
 })->name('dashboard');
 
 Route::resource('loans', LoanController::class);
@@ -88,3 +102,8 @@ Route::get('/centers/{center}/details', [CenterController::class, 'details'])->n
 
 Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+
+Route::get('/centers/{center}/edit', [CenterController::class, 'edit'])->name('centers.edit');
+Route::put('/centers/{center}', [CenterController::class, 'update'])->name('centers.update');
+Route::delete('/centers/{center}', [CenterController::class, 'destroy'])->name('centers.destroy');
+

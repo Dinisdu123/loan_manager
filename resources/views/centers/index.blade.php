@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-6 bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen animate-on-load">
+        <!-- Header Section -->
         <div class="flex justify-between items-center mb-6 animate__animated animate__fadeIn animate__fastest">
             <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-900 drop-shadow-md">
                 <i class="fas fa-building mr-2 text-indigo-600"></i>Centers Overview
@@ -44,7 +45,7 @@
                                     </button>
                                     <button onclick="document.getElementById('add-member-{{ $center->id }}').showModal()"
                                             class="btn-custom bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-teal-700 inline-flex items-center shadow-md">
-                                        <i class="fas fa-user-plus mr-2"></i>Add Member
+                                        <i class="fas fa-user-plus mr-2"></i>Add Members
                                     </button>
                                     <button onclick="document.getElementById('remove-member-{{ $center->id }}').showModal()"
                                             class="btn-custom bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 inline-flex items-center shadow-md">
@@ -88,9 +89,9 @@
                                 class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm py-2 px-3"
                                 required>
                             <option value="">Select a Leader</option>
-                            @foreach (\App\Models\User::all() as $user)
-                                <option value="{{ $user->id }}" {{ $center->leader_id == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
+                            @foreach ($center->members as $member)
+                                <option value="{{ $member->id }}" {{ $center->leader_id == $member->id ? 'selected' : '' }}>
+                                    {{ $member->name }} ({{ $member->user_number }})
                                 </option>
                             @endforeach
                         </select>
@@ -114,23 +115,27 @@
             <dialog id="add-member-{{ $center->id }}"
                     class="p-6 bg-white rounded-xl shadow-lg max-w-md w-full bg-gradient-to-br from-white to-gray-50 border border-indigo-200 animate__animated animate__zoomIn animate__fastest">
                 <h2 class="text-xl font-bold text-indigo-900 mb-4">
-                    <i class="fas fa-user-plus mr-2 text-indigo-600"></i>Add Member to {{ $center->name }}
+                    <i class="fas fa-user-plus mr-2 text-indigo-600"></i>Add Members to {{ $center->name }}
                 </h2>
                 <form method="POST" action="{{ route('centers.add-member', $center->id) }}">
                     @csrf
-                    <div class="mb-4">
-                        <label for="user_id-{{ $center->id }}" class="block text-sm font-medium text-indigo-800">Select Member</label>
-                        <select name="user_id" id="user_id-{{ $center->id }}"
-                                class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm py-2 px-3"
-                                required>
-                            <option value="">Select a Member</option>
-                            @foreach (\App\Models\User::all() as $user)
-                                @if (!$center->members->contains($user))
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
+                    <div class="mb-4 max-h-64 overflow-y-auto">
+                        @if ($usersWithoutCenter->isEmpty())
+                            <p class="text-sm text-gray-600">No available users to add.</p>
+                        @else
+                            @foreach ($usersWithoutCenter as $user)
+                                <div class="flex items-center mb-2">
+                                    <input type="checkbox" name="user_ids[]" id="user-{{ $center->id }}-{{ $user->id }}"
+                                           value="{{ $user->id }}"
+                                           class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                    <label for="user-{{ $center->id }}-{{ $user->id }}"
+                                           class="ml-2 text-sm text-gray-800">
+                                        {{ $user->name }} ({{ $user->user_number }})
+                                    </label>
+                                </div>
                             @endforeach
-                        </select>
-                        @error('user_id')
+                        @endif
+                        @error('user_ids')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -141,7 +146,7 @@
                         </button>
                         <button type="submit"
                                 class="btn-custom bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-teal-700 flex items-center shadow-md">
-                            <i class="fas fa-check mr-2"></i>Add
+                            <i class="fas fa-check mr-2"></i>Add Selected
                         </button>
                     </div>
                 </form>
@@ -162,7 +167,7 @@
                                 required>
                             <option value="">Select a Member</option>
                             @foreach ($center->members as $member)
-                                <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                <option value="{{ $member->id }}">{{ $member->name }} ({{ $member->user_number }})</option>
                             @endforeach
                         </select>
                         @error('user_id')

@@ -86,7 +86,12 @@ class GivenLoanController extends Controller
     public function index()
     {
         $centers = Center::all();
-        return view('given_loans.index', compact('centers'));
+        $nearestGivenPayment = GivenPayment::where('status', 'pending')
+            ->where('payment_date', '>=', Carbon::today())
+            ->orderBy('payment_date', 'asc')
+            ->with(['loan.user', 'loan.center'])
+            ->first();
+        return view('given_loans.index', compact('centers', 'nearestGivenPayment'));
     }
 
     public function show($id)
@@ -101,7 +106,11 @@ class GivenLoanController extends Controller
 
     public function markPaymentPaid(Request $request, GivenPayment $payment)
     {
-        $payment->update(['status' => 'paid']);
+        $isOverdue = $payment->status === 'pending' && Carbon::parse($payment->payment_date)->isPast();
+
+        $payment->update([
+            'status' => $isOverdue ? 'overdue_paid' : 'paid',
+        ]);
 
         $loan = $payment->loan;
         $loan->remaining_balance -= $payment->amount;
@@ -114,12 +123,11 @@ class GivenLoanController extends Controller
         $user = $loan->user;
         if ($user && $user->phone) {
             try {
-                
                 $formattedPhoneNumber = preg_replace('/^0/', '+94', $user->phone);
                 Log::debug('Attempting to send SMS to: ' . $formattedPhoneNumber . ' for user ID: ' . $user->id);
                 
                 $twilio = new Client(config('services.twilio.sid'), config('services.twilio.token'));
-                $message = "Dear {$user->name}, your installment of LKR {$payment->amount}  has been Recieved " . now()->format('Y-m-d') . ". You have LKR " . number_format($loan->remaining_balance, 2) . " left to pay. Thank you! Reply STOP to unsubscribe.";
+                $message = "Dear {$user->name}, your installment of LKR {$payment->amount} has been Received on " . now()->format('Y-m-d') . ". You have LKR " . number_format($loan->remaining_balance, 2) . " left to pay. Thank you! Reply STOP to unsubscribe.";
                 $twilio->messages->create(
                     $formattedPhoneNumber,
                     [
@@ -135,9 +143,9 @@ class GivenLoanController extends Controller
             Log::warning('SMS not sent for user ID ' . ($user ? $user->id : 'unknown') . ': Missing phone');
         }
 
-        return redirect()->back()->with('success', 'Payment marked as paid.');
+        return redirect()->back()->with('success', 'Payment marked as ' . ($isOverdue ? 'overdue paid' : 'paid') . '.');
     }
-
+        
     public function destroy(GivenLoan $loan)
     {
         if (!$loan->exists) {
@@ -208,16 +216,22 @@ class GivenLoanController extends Controller
         }
         return view('given_loans.report', compact('user', 'loans', 'total_loans', 'completed_loans', 'active_loans', 'unpaid_loans', 'overdue_payments'));
     }
+
     public function history(User $user)
-{
-    $loans = GivenLoan::with('center')
-        ->where('user_id', $user->id)
-        ->get();
+    {
+        $loans = GivenLoan::with('center', 'payments')
+            ->where('user_id', $user->id)
+            ->get();
 
-    $totalLoansAmount = $loans->sum('amount');
-    $totalDurationMonths = $loans->sum('duration_months');
+        $totalLoansAmount = $loans->sum('amount');
+        $totalDurationMonths = $loans->sum('duration_months');
+        $overduePaymentsCount = $loans->sum(function ($loan) {
+            return $loan->payments->where('status', 'overdue_paid')->count();
+        });
 
-    return view('given_loans.history', compact('user', 'loans', 'totalLoansAmount', 'totalDurationMonths'));
-}
+        $user->load('centers');
+
+        return view('given_loans.history', compact('user', 'loans', 'totalLoansAmount', 'totalDurationMonths', 'overduePaymentsCount'));
+    }
 }
 ?>

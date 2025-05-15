@@ -15,7 +15,23 @@
 
         <!-- Center Overview -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 card-hover bg-gradient-to-br from-white to-gray-50 border border-indigo-200 animate__animated animate__fadeInUp animate__fastest">
-            <h2 class="text-2xl font-semibold text-indigo-800 mb-4">Overview</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-indigo-800">Overview</h2>
+                <div class="flex gap-2">
+                    <a href="{{ route('centers.edit', $center->id) }}"
+                       class="btn-custom bg-gradient-to-r from-yellow-600 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-orange-700 flex items-center shadow-md">
+                        <i class="fas fa-edit mr-2"></i>Edit Center
+                    </a>
+                    <form action="{{ route('centers.destroy', $center->id) }}" method="POST" class="inline-block">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this center?')"
+                                class="btn-custom bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 flex items-center shadow-md">
+                            <i class="fas fa-trash-alt mr-2"></i>Delete Center
+                        </button>
+                    </form>
+                </div>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
                 <p><strong>Name:</strong> {{ $center->name }}</p>
                 <p><strong>Nickname:</strong> {{ $center->nickname }}</p>

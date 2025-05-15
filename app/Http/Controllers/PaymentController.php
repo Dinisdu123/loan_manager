@@ -10,12 +10,10 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        // Fetch only paid payments with related loan details
         $payments = Payment::with('loan')
             ->where('status', 'paid')
             ->get();
 
-        // Calculate total paid amount per lender
         $totals = Payment::where('payments.status', 'paid')
             ->join('loans', 'payments.loan_id', '=', 'loans.id')
             ->groupBy('loans.lender_name')

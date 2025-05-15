@@ -31,15 +31,14 @@ class LoanController extends Controller
         ]);
 
         $amount = $request->amount;
-        $interest_rate = $request->interest_rate / 100; // Convert to decimal
+        $interest_rate = $request->interest_rate / 100; 
         $duration_months = $request->duration_months;
 
-        // Calculate total repayment (simple interest)
         $interest = $amount * $interest_rate * $duration_months;
         $total_repayment = $amount + $interest;
 
         // Calculate weekly repayment
-        $weeks = $duration_months * 4; // Approximate 4 weeks per month
+        $weeks = $duration_months * 4; 
         $weekly_repayment = $total_repayment / $weeks;
 
         $loan = Loan::create([
@@ -54,8 +53,8 @@ class LoanController extends Controller
             'status' => 'active',
         ]);
 
-        // Generate payment schedule starting one week from start_date
-        $current_date = Carbon::parse($request->start_date)->addWeek(); // Start 1 week later
+      
+        $current_date = Carbon::parse($request->start_date)->addWeek(); 
         for ($i = 0; $i < $weeks; $i++) {
             Payment::create([
                 'loan_id' => $loan->id,

@@ -66,7 +66,6 @@
                 @endif
             </div>
 
-           
             <h2 class="text-2xl font-bold text-indigo-800 mb-4 animate__animated animate__fadeIn animate__fastest animate__delay-300ms">
                 <i class="fas fa-list mr-2"></i>Payment Schedule
             </h2>
@@ -84,20 +83,21 @@
                         <tbody class="divide-y divide-gray-200">
                             @forelse ($payments as $payment)
                                 @php
-                                    $isOverdue = $payment->status == 'pending' && \Carbon\Carbon::parse($payment->payment_date)->isPast();
+                                    $isOverdue = $payment->status === 'pending' && \Carbon\Carbon::parse($payment->payment_date)->isPast();
                                 @endphp
                                 <tr class="hover:bg-indigo-50 transition duration-200">
-                                    <td class="px-6 py-4 text-sm text-gray-800">{{ $payment->payment_date->format('Y-m-d') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-800">{{ \Carbon\Carbon::parse($payment->payment_date)->format('Y-m-d') }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-800">{{ number_format($payment->amount, 2) }}</td>
                                     <td class="px-6 py-4 text-sm">
                                         <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full
-                                            {{ $isOverdue ? 'bg-red-100 text-red-800' :
-                                               ($payment->status == 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                            {{ $isOverdue ? 'Overdue' : ucfirst($payment->status) }}
+                                            {{ $payment->status === 'pending' && $isOverdue ? 'bg-red-100 text-red-800' :
+                                               ($payment->status === 'paid' ? 'bg-green-100 text-green-800' :
+                                               ($payment->status === 'overdue_paid' ? 'bg-orange-100 text-orange-800' : 'bg-yellow-100 text-yellow-800')) }}">
+                                            {{ $isOverdue ? 'Overdue' : ($payment->status === 'overdue_paid' ? 'Overdue Paid' : ucfirst($payment->status)) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm">
-                                        @if ($payment->status == 'pending')
+                                        @if ($payment->status === 'pending')
                                             <form action="{{ route('given_loans.mark_payment_paid', $payment) }}" method="POST" class="inline-block">
                                                 @csrf
                                                 <button type="submit"

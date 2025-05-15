@@ -7,9 +7,7 @@
             <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Loan Management System
         </h1>
 
-      
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate__animated animate__fadeInUp animate__faster animate__delay-100ms">
-           
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-indigo-100 to-blue-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-money-check-alt mr-2 text-xl text-indigo-600"></i>Loans & Payments
@@ -30,7 +28,6 @@
                 </div>
             </div>
 
-          
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-blue-100 to-purple-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-users mr-2 text-xl text-blue-600"></i>Users
@@ -47,7 +44,6 @@
                 </div>
             </div>
 
-           
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-purple-100 to-pink-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-building mr-2 text-xl text-purple-600"></i>Centers
@@ -64,7 +60,6 @@
                 </div>
             </div>
 
-            
             <div class="bg-white rounded-xl shadow-lg p-5 card-hover bg-gradient-to-br from-orange-100 to-red-100 hover:shadow-xl transition-all duration-300">
                 <h2 class="text-lg font-bold text-indigo-800 mb-3 flex items-center">
                     <i class="fas fa-clipboard-list mr-2 text-xl text-orange-600"></i>Given Loans
@@ -82,37 +77,76 @@
             </div>
         </div>
 
-      
         <div class="mt-10 animate__animated animate__fadeInUp animate__faster animate__delay-300ms">
             <h2 class="text-2xl font-bold text-indigo-800 text-center mb-5 drop-shadow-sm">
-                Nearest Upcoming Payment
+                Upcoming Payments
             </h2>
-            @if ($nearestPayment)
-                @php
-                    $isOverdue = \Carbon\Carbon::parse($nearestPayment->payment_date)->isBefore(now());
-                @endphp
-                <div class="card-hover bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-lg max-w-md mx-auto border border-indigo-200 hover:shadow-xl transition-all duration-300 animate__animated animate__bounceIn animate__faster animate__delay-400ms">
-                    <h3 class="text-xl font-semibold {{ $isOverdue ? 'text-red-600' : 'text-indigo-600' }} mb-3">
-                        Payment for {{ $nearestPayment->loan->lender_name }}
-                    </h3>
-                    <div class="text-gray-700 {{ $isOverdue ? 'text-red-600' : '' }} space-y-1 text-sm">
-                        <p><strong>Amount:</strong> {{ number_format($nearestPayment->amount, 2) }}</p>
-                        <p><strong>Date:</strong> {{ $nearestPayment->payment_date->format('Y-m-d') }}</p>
-                        <p><strong>Status:</strong> {{ $isOverdue ? 'Overdue' : 'Pending' }}</p>
-                    </div>
-                    <form action="{{ route('payments.markPaid', $nearestPayment) }}" method="POST" class="mt-4">
-                        @csrf
-                        <button type="submit"
-                                class="btn-custom bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-teal-600 flex items-center mx-auto shadow-md">
-                            <i class="fas fa-check-circle mr-2"></i>Mark as Paid
-                        </button>
-                    </form>
+            <div class="flex flex-col md:flex-row gap-6 justify-center">
+                <!-- Nearest Upcoming Payment -->
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-xl font-bold text-indigo-800 text-center mb-4">Personal Loan Installments</h3>
+                    @if ($nearestPayment)
+                        @php
+                            $isOverdue = \Carbon\Carbon::parse($nearestPayment->payment_date)->isBefore(now());
+                        @endphp
+                        <div class="card-hover bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-all duration-300 animate__animated animate__bounceIn animate__faster animate__delay-400ms">
+                            <h4 class="text-lg font-semibold {{ $isOverdue ? 'text-red-600' : 'text-indigo-600' }} mb-3">
+                                Payment for {{ $nearestPayment->loan->user->name ?? 'Unknown' }}
+                            </h4>
+                            <div class="text-gray-700 {{ $isOverdue ? 'text-red-600' : '' }} space-y-1 text-sm">
+                                <p><strong>Amount:</strong> {{ number_format($nearestPayment->amount, 2) }}</p>
+                                <p><strong>Date:</strong> {{ $nearestPayment->payment_date->format('Y-m-d') }}</p>
+                                <p><strong>Status:</strong> {{ $isOverdue ? 'Overdue' : 'Pending' }}</p>
+                            </div>
+                            <form action="{{ route('payments.markPaid', $nearestPayment) }}" method="POST" class="mt-4">
+                                @csrf
+                                <button type="submit"
+                                        class="btn-custom bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-teal-600 flex items-center mx-auto shadow-md">
+                                    <i class="fas fa-check-circle mr-2"></i>Mark as Paid
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="card-hover bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-lg border border-indigo-200 text-gray-600 text-center animate__animated animate__fadeIn animate__faster animate__delay-400ms">
+                            No upcoming or overdue payments found.
+                        </div>
+                    @endif
                 </div>
-            @else
-                <div class="card-hover bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-lg max-w-md mx-auto border border-indigo-200 text-gray-600 text-center animate__animated animate__fadeIn animate__faster animate__delay-400ms">
-                    No upcoming or overdue payments found.
+
+               
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-xl font-bold text-indigo-800 text-center mb-4">Given Loan Installments</h3>
+                    @if ($nearestGivenPayments->isNotEmpty())
+                        @foreach ($nearestGivenPayments as $payment)
+                            @php
+                                $isOverdue = \Carbon\Carbon::parse($payment->payment_date)->isBefore(now());
+                            @endphp
+                            <div class="card-hover bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-all duration-300 animate__animated animate__bounceIn animate__faster animate__delay-600ms mb-4">
+                                <h4 class="text-lg font-semibold {{ $isOverdue ? 'text-red-600' : 'text-indigo-600' }} mb-3">
+                                    Installment for {{ $payment->loan->user->name ?? 'Unknown' }}
+                                </h4>
+                                <div class="text-gray-700 {{ $isOverdue ? 'text-red-600' : '' }} space-y-1 text-sm">
+                                    <p><strong>Center:</strong> {{ $payment->loan->center->name ?? 'N/A' }}</p>
+                                    <p><strong>Amount:</strong> {{ number_format($payment->amount, 2) }}</p>
+                                    <p><strong>Date:</strong> {{ $payment->payment_date->format('Y-m-d') }}</p>
+                                    <p><strong>Status:</strong> {{ $isOverdue ? 'Overdue' : 'Pending' }}</p>
+                                </div>
+                                <form action="{{ route('given_loans.mark_payment_paid', $payment) }}" method="POST" class="mt-4">
+                                    @csrf
+                                    <button type="submit"
+                                            class="btn-custom bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-teal-600 flex items-center mx-auto shadow-md">
+                                        <i class="fas fa-check-circle mr-2"></i>Mark as Paid
+                                    </button>
+                                </form>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="card-hover bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-lg border border-indigo-200 text-gray-600 text-center animate__animated animate__fadeIn animate__faster animate__delay-600ms">
+                            No upcoming or overdue given loan installments found.
+                        </div>
+                    @endif
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 @endsection

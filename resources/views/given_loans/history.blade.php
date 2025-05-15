@@ -27,6 +27,7 @@
                 <p><strong>Name:</strong> {{ $user->name }}</p>
                 <p><strong>Total Loan Amount:</strong> {{ number_format($totalLoansAmount, 2) }}</p>
                 <p><strong>Total Duration:</strong> {{ $totalDurationMonths }} months</p>
+                <p><strong>Overdue Payments:</strong> {{ $overduePaymentsCount }}</p>
                 @if ($user->phone)
                     <p><strong>Phone:</strong> {{ $user->phone }}</p>
                 @endif
